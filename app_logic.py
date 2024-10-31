@@ -1,40 +1,40 @@
 import tkinter as tk
 from tkinter import messagebox
 from api import Api
-from registro import TablaRegistros
+from tabla import TablaRegistros
 
 
-class Aplicacion(tk.Tk):
+class Aplicacion:
     def __init__(self, api):
-        super().__init__()
         self.api = api
-        self.title("Leyendas en velocidad")
-        self.resizable(False, False)
+        self.root = tk.Tk()
+        self.root.title("Leyendas en velocidad")
+        self.root.resizable(False, False)
         self.crear_widgets()
 
     def crear_widgets(self):
         # Botón para obtener datos
-        self.boton_obtener_datos = tk.Button(self, text="Obtener Datos", command=self.obtener_datos)
-        self.boton_obtener_datos.pack(pady=5)
+        boton_obtener_datos = tk.Button(self.root, text="Obtener Datos".upper(), command=self.obtener_datos)
+        boton_obtener_datos.pack(pady=5)
 
         # Entrada y botón para buscar registro específico
-        self.label_id = tk.Label(self, text="Ingrese el ID del registro a buscar:")
-        self.label_id.pack(pady=5)
-        self.entry_id = tk.Entry(self)
+        label_id = tk.Label(self.root, text="Ingrese el ID del registro a buscar:")
+        label_id.pack(pady=5)
+        self.entry_id = tk.Entry(self.root)
         self.entry_id.pack(pady=5)
-        self.boton_buscar = tk.Button(self, text="Buscar Registro", command=self.buscar_registro)
-        self.boton_buscar.pack(pady=10)
+        boton_buscar = tk.Button(self.root, text="Buscar Registro", command=self.buscar_registro)
+        boton_buscar.pack(pady=10)
 
         # Botón para refrescar datos
-        self.boton_actualizar_registro = tk.Button(self, text="Actualizar registro", command=self.refrescar_datos)
-        self.boton_actualizar_registro.pack(pady=5)
+        boton_actualizar_registro = tk.Button(self.root, text="Actualizar registro", command=self.refrescar_datos)
+        boton_actualizar_registro.pack(pady=5)
 
         # Tabla de todos los registros
         columnas = ("ID", "Modelo", "Marca", "Año", "Velocidad Máx")
-        self.tabla_todos = TablaRegistros(self, columnas, "Todos los Registros")
+        self.tabla_todos = TablaRegistros(self.root, columnas, "Todos los Registros")
 
         # Tabla para mostrar el registro específico
-        self.tabla_especifica = TablaRegistros(self, columnas, "Registro Específico")
+        self.tabla_especifica = TablaRegistros(self.root, columnas, "Registro Específico")
 
     def obtener_datos(self):
         registros = self.api.obtener_registros()
@@ -67,9 +67,5 @@ class Aplicacion(tk.Tk):
             messagebox.showinfo("Registro no encontrado", f"No se encontró un registro con el ID {id_buscado}")
             self.tabla_especifica.limpiar()
 
-
-if __name__ == "__main__":
-    url_api = "https://6720695ae7a5792f053168d8.mockapi.io/LeyendasEnVelocidad"
-    api = Api(url_api)
-    app = Aplicacion(api)
-    app.mainloop()
+    def ejecutar(self):
+        self.root.mainloop()
